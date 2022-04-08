@@ -1,0 +1,47 @@
+class Venta{
+	var property ventas = []
+	var property fecha
+	var property cantidad
+	var property tipoDePago 
+	
+	method agregarPrenda(prenda){ 
+		cantidad.times(ventas.add(prenda))
+	}	 
+	
+	method vender(prenda) = prenda.precio() + tipoDePago.precio(prenda)
+	
+	method ganancias() = ventas.sum{ prenda => prenda.esVendida() }
+}
+
+object ventaConEfectivo { method precio(prenda) = prenda.precioPrenda() + 0 }
+
+class VentaConTarjeta {
+	var property cuotas
+	
+	method precio(prenda) = cuotas * 1 + 0.01 * prenda.precioPrenda()
+} 
+
+class Prenda{
+	var property estado
+	var property precioBase 
+	
+	method precioPrenda() = estado.modificarPrecio(self)  
+}
+
+object nuevo{
+	method modificarPrecio(prenda) = prenda.precioBase() + 0
+}
+
+class Promocion{
+	var property promocion
+	
+	method modificarPrecio(prenda) = prenda.precioBase() - promocion
+}
+
+object liquidacion{
+	method modificarPrecio(prenda) = prenda.precioBase() * 0.5 
+}
+
+const saco1 = new Prenda(estado = nuevo, precioBase = 50)
+const saco2 = new Prenda(estado = new Promocion(promocion = 10), precioBase = 50)
+const saco3 = new Prenda(estado = liquidacion, precioBase = 50)
