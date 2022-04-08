@@ -1,17 +1,24 @@
+//-----------------------------------------------------------------------------------------------------------
+// Ventas
+//-----------------------------------------------------------------------------------------------------------
 class Venta{
-	var property ventas = []
+	var property prenda
 	var property fecha
 	var property cantidad
-	var property tipoDePago 
+	var property tipoDePago
+	var property ventas = [] 
 	
-	method agregarPrenda(prenda){ 
+	method vender(){ 
 		cantidad.times(ventas.add(prenda))
 	}	 
 	
-	method vender(prenda) = prenda.precio() + tipoDePago.precio(prenda)
+	method precioVenta() = prenda.precio() + tipoDePago.precio(prenda)
 	
-	method ganancias() = ventas.sum{ prenda => prenda.esVendida() }
+	method ganancias() = ventas.sum{ prendaX => prendaX.precioVenta() }
 }
+//-----------------------------------------------------------------------------------------------------------
+// Formas de Pago
+//-----------------------------------------------------------------------------------------------------------
 
 object ventaConEfectivo { method precio(prenda) = prenda.precioPrenda() + 0 }
 
@@ -21,12 +28,20 @@ class VentaConTarjeta {
 	method precio(prenda) = cuotas * 1 + 0.01 * prenda.precioPrenda()
 } 
 
+//-----------------------------------------------------------------------------------------------------------
+// Prendas
+//-----------------------------------------------------------------------------------------------------------
 class Prenda{
 	var property estado
 	var property precioBase 
+	var property tipo
 	
 	method precioPrenda() = estado.modificarPrecio(self)  
 }
+
+//-----------------------------------------------------------------------------------------------------------
+// Estados
+//-----------------------------------------------------------------------------------------------------------
 
 object nuevo{
 	method modificarPrecio(prenda) = prenda.precioBase() + 0
@@ -42,6 +57,20 @@ object liquidacion{
 	method modificarPrecio(prenda) = prenda.precioBase() * 0.5 
 }
 
-const saco1 = new Prenda(estado = nuevo, precioBase = 50)
-const saco2 = new Prenda(estado = new Promocion(promocion = 10), precioBase = 50)
-const saco3 = new Prenda(estado = liquidacion, precioBase = 50)
+
+const saco1 = new Prenda(tipo = "saco", estado = nuevo, precioBase = 50)
+const pantalon1 = new Prenda(tipo = "pantalon", estado = new Promocion(promocion = 10), precioBase = 50)
+const camisa1 = new Prenda(tipo = "camisa", estado = liquidacion, precioBase = 50)
+
+/*Para empezar al momento de querer calcular el precio de cada prenda hay que tener en cuenta el estado de dicha prenda. Teniendo esto en
+  cuenta obte que los estados (nuevo, promocion y liquidacion) sean polimorficos y que se delegue la responsabilidad de modificar el precio 
+  a ellos. Se obto por elegir entre clases y objetos dependiendo de si habia un estado interno que se debia instanciar o no 
+  (Ej: para el  estado Promocion habia que instanciar un valor decidido por el usuario para luego modificar el precio de la prenda). 
+  
+  Por otro lado elegi disenar a las ventas como clases ya que al igual que los estados tenian estado interno. Declare las diferentes variables
+  y por ultimo obtee por que los metodos de pago sean polimorficos y delegar la responsabilidad del recargo a cada uno de ellos, ya que 
+  ambos recargos eran diferentes. 
+  
+  Por ultimo no elegi la herencia como opcion porque en ambos casos(Venta y Prenda) no crei necesaria que las diferentes clases u objetos
+  hereden los estados de las clases madre. 
+ */
